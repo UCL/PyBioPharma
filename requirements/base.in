@@ -1,0 +1,15 @@
+
+# The optimisation library
+deap
+
+# GUI & plotting
+bokeh
+jupyter
+matplotlib
+
+# Utilities
+numpy
+pandas
+pint
+Pyyaml
+scoop

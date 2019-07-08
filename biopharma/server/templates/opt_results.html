@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block styles %}
+  {{ super() }}
+  <link
+      href="http://cdn.pydata.org/bokeh/release/bokeh-{{bokeh_version}}.min.css"
+      rel="stylesheet" type="text/css">
+  <link
+      href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-{{bokeh_version}}.min.css"
+      rel="stylesheet" type="text/css">
+
+  <!-- Override some aspects of the indigo layout for this page -->
+  <style>
+  figure {
+    float: left;
+    vertical-align: top;
+    margin-top: 0;
+    padding-right: 2em;
+  }
+
+  /* Last figure has no need for right padding */
+  figure:last-of-type {
+    padding-right: 0;
+  }
+
+  figcaption {
+    text-align: center;
+  }
+
+  figcaption h4 {
+    margin-top: 0;
+  }
+
+  caption {
+    caption-side: top;
+  }
+  </style>
+{% endblock styles %}
+
+
+{% block head_scripts %}
+  {{ super() }}
+  <script src="http://cdn.pydata.org/bokeh/release/bokeh-{{bokeh_version}}.min.js"></script>
+  <script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-{{bokeh_version}}.min.js"></script>
+{% endblock head_scripts %}
+
+
+{% block breadcrumb_links %}
+  {{ super() }}
+  <li class="breadcrumb__item">Results</li>
+{% endblock breadcrumb_links %}
+
+
+{% block content %}
+<h1>Optimisation Results</h1>
+
+{% set best = optimiser.outputs['bestIndividuals'][0] %}
+{% set step_names = ['step1', 'step2'] %}
+
+<table>
+  <caption><h4>Key parameters used by the best individual</h4></caption>
+  <tr>
+    <th></th>
+    {% for name in step_names %}
+    <th>{{ name }}</th>
+    {% endfor %}
+  </tr>
+  {% if best.has_variable(step_names[0], 'varA') %}
+  <tr>
+    <th>Var A?</th>
+    {% for name in step_names %}
+    <td>
+      {% if best.get_variable(name, 'varA').value %}Option 1{% else %}Option 2{% endif %}
+    </td>
+    {% endfor %}
+  </tr>
+  {% endif %}
+  <tr>
+    <th>Var B</th>
+    {% for name in step_names %}
+    <td>
+      {% if best.get_variable(name, 'varB').value %}Option a{% else %}Option b{% endif %}
+    </td>
+    {% endfor %}
+  </tr>
+</table>
+
+{% if cost_script %}
+<figure>
+  <figcaption><h4>Cost breakdown of the best individual</h4></figcaption>
+  {{cost_script | safe}}
+  {{cost_div | safe}}
+</figure>
+{% endif %}
+
+<figure>
+  <figcaption><h4>Column sizing for the best individual</h4></figcaption>
+  {{col_script | safe}}
+  {{col_div | safe}}
+</figure>
+
+<div class="clearfix"></div>
+
+<h2>Technical details</h2>
+
+<dl>
+  <dt>Best fitness value</dt>
+  <dd>{{ optimiser.outputs['bestObjectiveValues'][0] }}</dd>
+
+  <dt>Best individual</dt>
+  <dd><pre>{{ best }}</pre></dd>
+
+  <dt>Fitnesses of the final population</dt>
+  <dd>
+    <ul>
+      {% for ind in optimiser.outputs['finalPopulation'] %}
+      <li>{{ ind.fitness.values[0] }}
+        {%- if ind.error -%}
+          {{ ': ' ~ ind.error }}
+        {%- endif -%}
+      </li>
+      {% endfor %}
+    </ul>
+  </dd>
+</dl>
+
+{% endblock content %}

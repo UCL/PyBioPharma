@@ -1,0 +1,18 @@
+
+<div class="login-state">
+  {% if current_user.is_authenticated %}
+    Logged in as <a href="{{ url_for_security('change_password') }}" title="Change password">{{ current_user.email }}</a>
+    <a title="Log out" href="{{ url_for_security('logout') }}"><i class="fa fa-sign-out fa-r"></i></a>
+  {% else %}
+    <a href="{{ url_for_security('login') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}" class="btn positive-action login-button"><i class="fa fa-sign-in fa-l"></i> Log in</a>
+    {% if security.registerable %}
+      <a href="{{ url_for_security('register') }}{% if 'next' in request.args %}?next={{ request.args.next|urlencode }}{% endif %}" class="btn">Register</a>
+    {% endif %}
+    {% if security.recoverable %}
+      <a href="{{ url_for_security('forgot_password') }}" class="btn">{{ _('Forgot password') }}</a>
+    {% endif %}
+    {% if security.confirmable %}
+      <a href="{{ url_for_security('send_confirmation') }}" class="btn">{{ _('Confirm account') }}</a>
+    {% endif %}
+  {% endif %}
+</div>

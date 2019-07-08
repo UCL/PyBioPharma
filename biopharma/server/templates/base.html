@@ -1,0 +1,61 @@
+{% extends "indigo/base.html" %}
+
+
+{% block page_title %}BioPharma{% endblock page_title %}
+
+
+{% block body_class %}
+  {% if current_user.is_authenticated %}logged-in{% else %}logged-out{% endif %}
+  {{ super() }}
+{% endblock body_class %}
+
+
+{% block styles %}
+  {{ super() }}
+  <link href="//cdn.ucl.ac.uk/skins/UCLIndigoSkin/default-theme/css/brightgreen.min.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <style>
+    /* TODO: Put this in a static file! */
+    .login-state {
+      position: absolute;
+      top: 1em;
+      right: 35px;
+    }
+  </style>
+{% endblock styles %}
+
+
+{% block nav_top_inner %}
+  {{ super() }}
+  {% include "includes/_login_state.html" %}
+{% endblock nav_top_inner %}
+
+
+{% block nav_mobile_inner %}
+  {{ super() }}
+  {% include "includes/_login_state.html" %}
+{% endblock nav_mobile_inner %}
+
+
+{% block nav_top_links %}
+  <li><a href="{{ url_for('main.index') }}">BioPharma Home</a></li>
+  {% if current_user.can_run_expt %}
+    <li><a href="{{ url_for('main.setup_opt') }}">Run optimisation</a></li>
+    <li><a href="{{ url_for('main.experiments') }}">View results</a></li>
+  {% endif %}
+  {% if current_user.is_admin %}
+    <li><a href="{{ url_for('admin.index') }}">Admin</a></li>
+  {% endif %}
+{% endblock nav_top_links %}
+
+
+{% block breadcrumb_links %}
+  <li class="breadcrumb__item"><a href="https://www.ucl.ac.uk/">UCL Home</a></li>
+  <li class="breadcrumb__item"><a href="http://www.ucl.ac.uk/research-it-services">Research IT Services</a></li>
+  <li class="breadcrumb__item"><a href="{{ url_for('main.index') }}">BioPharma</a></li>
+{% endblock breadcrumb_links %}
+
+
+{% block content_body %}
+  {% include "includes/_messages.html" %}
+  {{ super() }}
+{% endblock %}

@@ -1,0 +1,7 @@
+-r base.in
+
+# For testing the code
+pytest
+
+# For developers to manage requirements
+pip-tools

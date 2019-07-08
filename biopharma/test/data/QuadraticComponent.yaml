@@ -1,0 +1,5 @@
+# calculates x^2 - 2*x + 1, true optimum is at 1
+parameters:
+  a: 1
+  b: -2
+  c: 1

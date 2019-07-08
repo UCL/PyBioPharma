@@ -1,0 +1,19 @@
+# Requirements for the PyBioPharma server
+
+-r base.in
+
+# Flask web framework
+Flask
+Flask-WTF
+Flask-Security
+Flask-Mail
+Flask-Admin
+bcrypt
+
+# Database connection
+psycopg2
+Flask-SQLAlchemy
+Flask-Migrate
+
+# Task queue
+celery

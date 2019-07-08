@@ -1,0 +1,211 @@
+# PlantUML description of the PyBioPharma class structure
+
+@startuml
+
+set namespaceSeparator none
+
+' The basic framework constructs
+
+abstract class  ModelComponent {
+  ' Properties
+  +name : str
+  -param_filename : str
+  ..Specified by modeller..
+  +INPUTS : dict(name -> Specification)
+  +OUTPUTS : dict(name -> Specification)
+  +PARAMETERS : dict(name -> Specification)
+  ..Set up by constructor..
+  +inputs : SpecifiedDict
+  +outputs : SpecifiedDict
+  +parameters : SpecifiedDict
+  --
+  ' Methods
+  +__init__(name, param_filename)
+  +load_parameters()
+  +load_inputs(filename)
+  +extract_outputs()
+  +save_outputs(path)
+}
+
+dict <|-- SpecifiedDict
+
+abstract class Specification
+Specification <|-- Q
+Specification <|-- Value
+Specification <|-- Nested
+Specification <|-- Enumerated
+Specification <|-- Table
+Specification <|-- Computed
+
+
+' Things that are 'model'
+
+class Facility {
+    +data_path : path
+    +products : [Product]
+    --
+    +__init__(data_path)
+    +run()
+}
+
+class Product {
+    +facility : Facility
+    +sequence : ProcessSequence
+    --
+    +__init__(facility, steps=[], sequence=None, name, param_filename)
+    +evaluate()
+}
+
+class ProcessSequence {
+    +steps : [ProcessStep]
+    +product : Product
+    +facility : Facility
+    --
+    +__init__(steps, facility=None, product=None)
+    +run()
+    +findStep(name)
+    ..Analysis methods..
+    +step_outputs(item)
+    +step_increments(item)
+}
+
+abstract class ProcessStep {
+    +facility : Facility
+    +product : Product
+    ' Members specific to a process step subclass considered private
+    --
+    +__init__(facility=None, product=None)
+    +run()
+    {abstract} #mass_balance()
+    {abstract} #calculate_time()
+    {abstract} #calculate_cost()
+}
+
+
+' Relationships
+
+Specification .right. ModelComponent
+
+ModelComponent <|-- Facility
+ModelComponent <|-- Product
+ModelComponent <|-- ProcessSequence
+ModelComponent <|-- ProcessStep
+
+ProcessStep <|-- SampleStepA
+ProcessStep <|-- SampleStepB
+
+Facility "1" o-- "*" Product
+Product o-- ProcessSequence
+ProcessSequence "1" *-- "*" ProcessStep
+
+
+' GA Optimiser
+
+package "GA Optimiser" <<Frame>> {
+
+    ModelComponent <|- Optimiser
+    Optimiser -down-> Facility : optimises
+
+    class Optimiser {
+        +facility : Facility
+        +debug : bool
+        -variable_specs
+        -objectives
+        --
+        +__init__(facility)
+        +add_variable(*, gen, component, item, collection='parameters')
+        +add_objective(component, item, collection='outputs', minimise=False, maximise=False, weight=1.0)
+        +run()
+    }
+
+    'package "opt.individual" <<Frame>> {
+        class Variable {
+            +component : ModelComponent
+            +individual : Individual
+            +generator : Generator
+            +component_selector : function
+            +item : str
+            collection : str
+            +value : any
+            --
+            +__init__(self, individual, gen, component, item, collection='parameters')
+            +update_facility()
+            +draw()
+            +repair()
+        }
+
+        class Individual {
+            +optimiser : Optimiser
+            +facility : Facility
+            +fitness
+            +variables : [Variable]
+            --
+            +__init__(optimiser)
+            +apply_to_facility()
+            +draw()
+            +is_valid()
+            +repair()
+            +get_variable(component_name, item, collection='parameters')
+        }
+
+        Optimiser "1" o- "*" Individual
+        Individual "1" o- "*" Variable
+    '}
+
+    package opt.gen <<Frame>> {
+        Variable o-d- Generator
+
+        abstract class Generator {
+            +{abstract}draw(var : Variable)
+            +{abstract}is_valid(var: Variable)
+            +repair(var : Variable)
+            +describe(var : Variable)
+        }
+
+        class RangeGenerator {
+            +range_min : float
+            +range_max : float
+            +units : Units
+            --
+            +__init__(range_min, range_max)
+            +update_range(range_min, range_max)
+            +check_range(var)
+            +draw(var)
+            +is_valid(var)
+        }
+
+        class ChoiceGenerator {
+            +choices : list
+            --
+            +__init__(choices)
+            +update_choices(choices)
+            +check_choices(var)
+            +draw(var)
+            +is_valid(var)
+        }
+
+        class Binary {
+            +draw(var)
+        }
+
+        Generator <|-d- RangeGenerator
+        Generator <|-d- ChoiceGenerator
+        ChoiceGenerator <|-d- Binary
+    }
+}
+
+
+' Attempt to make the layout look reasonable with hidden links
+
+'ModelComponent -[hidden]> "GA Optimiser"
+
+Q -[hidden]> Value
+Value -[hidden]> Nested
+Nested -[hidden]> Table
+Table -[hidden]> Enumerated
+Enumerated -[hidden]> Computed
+
+hide SpecifiedDict
+hide dict
+
+@enduml

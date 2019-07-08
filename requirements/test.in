@@ -1,0 +1,4 @@
+# Requirements used by the automated test system
+
+-r local.in
+-r server.in

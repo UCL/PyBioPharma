@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .columns {
+      -webkit-column-count: 4;
+      -moz-column-count: 4;
+      column-count: 4;
+
+      -webkit-column-width: 20em;
+      -moz-column-width: 20em;
+      column-width: 20em;
+    }
+
+    .keep-together {
+      -webkit-column-break-inside: avoid;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  </style>
+{% endblock styles %}
+
+
+{% block breadcrumb_links %}
+  {{ super() }}
+  <li class="breadcrumb__item">Optimisation</li>
+{% endblock breadcrumb_links %}
+
+
+{% macro label_field(field) %}
+  {{ field.label(title=field.description) }}
+{% endmacro %}
+
+
+{% macro render_field(field, hide=[]) %}
+  {% if field.short_name != 'csrf_token' %}
+  <div class="keep-together">
+    {% if field.type == 'BooleanField' %}
+      {{ field(**kwargs)|safe }} {{ label_field(field) }} <br />
+    {% elif field.type == 'FormField' %}
+      {{ render_subform(field, field.description) }}
+    {% elif field.type == 'FieldList' %}
+      {% if field[0].type == 'FormField' %}
+        {{ render_table(field, hide=hide) }}
+      {% else %}
+        {{ field()|safe }}
+      {% endif %}
+    {% else %}
+      {{ label_field(field) }}
+      {{ field(class='form__control', **kwargs)|safe }}
+    {% endif %}
+    {% if field.errors %}
+      <ul class="error">
+        {% for error in field.errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  {% endif %}
+{% endmacro %}
+
+
+{% macro render_table(field, hide=[]) %}
+  {# Render a FieldList as a table #}
+  <table class="table-responsive">
+    <thead><tr>
+      {% set first_row = field[0] %}
+      {% for item in first_row %}
+        {% if item.short_name not in hide %}
+          <th>{{ label_field(item) }}</th>
+        {% endif %}
+      {% endfor %}
+    </tr></thead>
+    <tbody>{% for row in field %}
+      <tr>
+        {% for item in row %}
+          {%- if item.short_name in hide -%}
+            {{ item(class='input-group__item', **kwargs)|safe }}
+          {%- else -%}
+            <td>
+              {%- if item.type == 'HiddenField' -%}
+                {{ item.data }}
+              {%- endif -%}
+              {{ item(class='input-group__item', **kwargs)|safe }}
+            </td>
+          {%- endif -%}
+        {% endfor %}
+      </tr>
+    {% endfor %}</tbody>
+  </table>
+{% endmacro %}
+
+
+{% macro render_subform(form, legend, root=False, hide=[]) %}
+  <fieldset class="form__group{{ ' box' if not root }}">
+  <legend>{{ legend }}</legend>
+    {% set use_cols = form._fields|length > 3 %}
+    <div class="columns">
+      {% for field in form if use_cols and field.type not in ['FormField', 'FieldList'] %}
+        {{ render_field(field, hide=hide) }}
+      {% endfor %}
+    </div>
+    {% for field in form if not use_cols or field.type in ['FormField', 'FieldList'] %}
+      {{ render_field(field, hide=hide) }}
+    {% endfor %}
+  </fieldset>
+{% endmacro %}
+
+
+{% macro tab_id(base_name) %}{{ 'tab-' ~ base_name | replace(' ', '_') }}{% endmacro %}
+
+
+{% macro tab_link(base_name) %}{{ tab_id(base_name) ~ '-link' }}{% endmacro %}
+
+
+{% block content %}
+<h1>Optimise a Biopharma Facility</h1>
+
+{# TODO: It might be nicer to submit to /run_opt rather than /setup_opt #}
+<form method="POST" action="{{ url_for('main.setup_opt') }}">
+  {{ form.csrf_token }}
+
+  <div id="tabbed_panes">
+    <div class="js tabs__navigation">
+      <ul>
+        <li><a id="{{ tab_link('opt') }}">Optimiser</a></li>
+        <li><a id="{{ tab_link('facility') }}">Facility</a></li>
+        <li><a id="{{ tab_link('product') }}">Product</a></li>
+        <li><a id="{{ tab_link('sequence') }}">Process sequence</a></li>
+        <li><a id="{{ tab_link('steps') }}">Unit operations</a></li>
+      </ul>
+    </div>
+    <div class="js tabs__group">
+
+      <div class="js tabs__item" id="{{ tab_id('opt') }}">
+        <fieldset class="form__group box">
+          <legend>Objectives</legend>
+          {% for field in form['opt_form'] if field.short_name.startswith('obj_') %}
+            {{ render_field(field) }}
+          {% endfor %}
+        </fieldset>
+        <fieldset class="form__group box">
+          <legend>Variables</legend>
+          {% for field in form['opt_form'] if field.short_name.startswith('var_') %}
+            {{ render_field(field) }}
+          {% endfor %}
+        </fieldset>
+        <fieldset class="form__group box">
+          <legend>Optimisation parameters</legend>
+          {% for field in form['opt_form']
+             if not field.short_name.startswith('var_') and
+                not field.short_name.startswith('obj_') %}
+            {{ render_field(field) }}
+          {% endfor %}
+        </fieldset>
+      </div>
+
+      <div class="js tabs__item" id="{{ tab_id('facility') }}">
+        {{ render_subform(form['comp-Facility'], "Facility-level parameters", root=True) }}
+      </div>
+
+      <div class="js tabs__item" id="{{ tab_id('product') }}">
+        {{ render_subform(form['comp-Product'], "Product-level parameters", root=True) }}
+      </div>
+
+      <div class="js tabs__item" id="{{ tab_id('sequence') }}">
+        {{ render_subform(form['sequence_form'], "Process sequence", root=True) }}
+      </div>
+
+      <div class="js tabs__item" id="{{ tab_id('steps') }}">
+        <div class="js tabs__navigation">
+          <ul>
+            {% for step in steps %}
+              <li><a id="{{ tab_link(step.name) }}">{{ step.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="js tabs__group">
+          {% for step in steps %}
+            <div class="js tabs__item" id="{{ tab_id(step.name) }}">
+              {{ render_subform(step.form, "Parameters for " ~ step.name, root=True) }}
+            </div>
+          {% endfor %}
+        </div>
+      </div><!-- End of ProcessStep forms -->
+
+    </div><!-- End of tabs group -->
+  </div><!-- End of #tabbed_panes -->
+  Give this experiment a name by which to refer to it: (optional)
+  {{ render_field(form.name_field) }}
+
+  <input type="submit" name="action" value="Run optimisation"/>
+</form>
+{% endblock content %}
+
+
+{% block local_require_scripts %}
+  {# TODO: Put this in a static JS file? #}
+    require(["jquery"], function($) {
+
+      // Set up handlers for when a tab link is clicked, to display the corresponding tab
+      $('.tabs__navigation a').click(function () {
+        var link_id = this.id,
+            $selected_link = $('#' + link_id),
+            $selected_nav_li = $selected_link.parent(),
+            tab_id = link_id.substr(0, link_id.length - 5),
+            $selected_tab = $('#' + tab_id);
+        console.log('Clicked link ' + link_id + ' for tab ' + tab_id);
+        $selected_nav_li.siblings().children('a.active').removeClass('active');
+        $selected_link.addClass('active');
+        $('.tabs__item').not($selected_tab.parents('div')).removeClass('active');
+        $selected_tab.addClass('active');
+
+        // If a sub-tab was previously selected, make sure it's shown
+        $selected_sub_tab = $selected_tab.find('.tabs__navigation a.active');
+        if ($selected_sub_tab.length) {
+          $selected_sub_tab.click();
+        } else {
+          // If there is a group of sub-tabs with none selected, show the first one
+          $selected_tab.find('.tabs__navigation a').first().click();
+        }
+      });
+
+      // Show the main optimiser tab by default
+      $('#tab-opt-link').click();
+
+      // Add some special handling to hide parameters when they're selected for optimisation.
+
+      var optim_param_mapping = {
+        opt_var_1: {name: 'optVar1'},
+        opt_var_2: {name: 'optVar2'}
+      };
+
+      $.each(optim_param_mapping, function (key, value) {
+        var elt_match = '-' + value.name,
+            $elts = $('input[id$=' + elt_match + ']')
+                .add('label[for$=' + elt_match + ']');
+        $elts = $elts.add($elts.next('br'));
+        $('#opt_form-var_' + key).change(function () {
+          if (this.checked) {
+            $elts.hide();
+          } else {
+            $elts.show();
+          }
+        });
+        $elts.hide();
+      });
+
+      // For some reason Flask-WTF generates selected="" which doesn't register as selected...
+      $('option[selected]').prop('selected', true).change();
+    });
+{% endblock local_require_scripts %}

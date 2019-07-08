@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!--[if IE 7]> <html lang="en" class="lt-ie9 lt-ie8 no-js"> <![endif]-->
+<!--[if IE 8]> <html lang="en" class="lt-ie9 no-js"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  {% block meta %}
+    <meta charset=utf-8 />
+    <meta name="author" content="UCL" />
+    <meta name="description" content="UCL Homepage" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {% endblock meta %}
+
+  {% block social_meta %}
+    <!-- social meta -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@uclnews">
+    <meta name="twitter:title" content="UCL - London's Global University">
+    <meta name="twitter:description" content="UCL (University College London) is London's leading multidisciplinary university, with 8,000 staff and 25,000 students.">
+    <meta name="twitter:creator" content="@UCLWAMS">
+    <meta name="twitter:image:src" content="http://www.ucl.ac.uk/visual-identity/logos/standalone.png">
+    <meta property="og:image" content="http://www.ucl.ac.uk/visual-identity/logos/standalone.png" />
+    <meta property="og:title" content="UCL - London's Global University" />
+    <meta property="og:url" content="http://www.ucl.ac.uk" />
+    <meta property="og:site_name" content="UCL" />
+    <meta property="og:description" content="UCL (University College London) is London's leading multidisciplinary university, with 8,000 staff and 25,000 students." />
+    <meta property="og:type" content="website" />
+    <meta property="og:profile_id" content="uclofficial" />
+    <!-- end social meta -->
+  {% endblock social_meta %}
+
+  <title>{% block page_title %}University College London{% endblock page_title %}</title>
+
+  {% block styles %}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//static.ucl.ac.uk/indigo/css/screen.min.css" media="screen, projection" rel="stylesheet" type="text/css" />
+    <!--[if IE]><link href="//static.ucl.ac.uk/indigo/css/ie.min.css" rel="stylesheet" /><![endif]-->
+    <!--[if lt IE 8]><link href="//static.ucl.ac.uk/indigo/css/ie-old.min.css" rel="stylesheet" /><![endif]-->
+  {% endblock styles %}
+
+  {% block favicons %}
+    <link rel="shortcut icon" href="//static.ucl.ac.uk/indigo/images/favicon.ico" />
+    <link rel="apple-touch-icon-precomposed" href="favicon-152.png">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="favicon-144.png">
+  {% endblock favicons %}
+
+  {% block head_scripts %}
+    <script src="//static.ucl.ac.uk/indigo/js/lib/modernizr-custom.js"></script>
+
+    <script>
+      var cuttingTheMustard = document.querySelector && window.localStorage && window.addEventListener;
+
+      Modernizr.load({
+        //cutting the mustard as used by the BBC
+        test: cuttingTheMustard
+        //if old browser load the shiv
+        ,
+        nope: [
+          '//static.ucl.ac.uk/indigo/js/lib/html5shiv-printshiv.min.js', '//static.ucl.ac.uk/indigo/js/lib/respond.min.js'
+        ]
+      });
+      //set conditional assets for main.js
+      var globalSiteSpecificVars = {
+        pathToJquery: '//static.ucl.ac.uk/indigo/js/lib/jquery-1.9.1.min',
+        googleAnalyticsIdsArray: [] //specify array of site specific id's NOT UCL generic UA-943297-1
+      }
+      if (cuttingTheMustard) {
+        globalSiteSpecificVars.pathToJquery = "//static.ucl.ac.uk/indigo/js/lib/jquery-2.1.1.min";
+      }
+    </script>
+  {% endblock head_scripts %}
+
+  {% block extra_head %}
+  {% endblock extra_head %}
+
+</head>
+
+
+<body class="layout-horizontal layout-horizontal--nav-1col">
+
+  <header class="header header--desktop">
+
+  <a class="header__close" href="#">
+    <img src="//cdn.ucl.ac.uk/indigo/images/close.png" alt="X" />Close</a>
+
+  {% include "indigo/includes/global-masthead.html" %}
+
+  <div class="wrapper">
+
+    {% include "indigo/includes/ucl-banner.html" %}
+
+    <div class="sidebar">
+
+      <nav class="nav nav--mobile">
+        {% block nav_mobile_inner %}
+          <ul>
+            {% block nav_mobile_links %}
+            {% endblock nav_mobile_links %}
+          </ul>
+        {% endblock nav_mobile_inner %}
+      </nav>
+
+      <nav class="nav nav--left">
+        {% block nav_left_inner %}
+          <ul>
+            {% block nav_left_links %}
+            {% endblock nav_left_links %}
+          </ul>
+        {% endblock nav_left_inner %}
+      </nav>
+
+    </div>
+    <!-- end .sidebar -->
+
+    <nav class="nav nav--top">
+      {% block nav_top_inner %}
+        <ul>
+          {% block nav_top_links %}
+          {% endblock nav_top_links %}
+        </ul>
+      {% endblock nav_top_inner %}
+    </nav>
+
+  </div>
+  <!-- end .wrapper -->
+
+  </header>
+  <!-- end .header -->
+
+  <div class="site-content wrapper">
+
+    <header class="header header--mobile default-header">
+      <a class="header header__open" href="#">
+        <img src="//cdn.ucl.ac.uk/img/blank.gif" class="lazy" data-src="//static.ucl.ac.uk/indigo/images/mob-nav.png" alt="Menu" />
+      </a>
+    </header>
+
+    <div class="site-content__inner clearfix">
+      <div class="site-content__body">
+
+        {% block breadcrumbs %}
+          <nav class="breadcrumb clearfix">
+            <ul class="breadcrumb__list">
+              {% block breadcrumb_links %}
+              {% endblock breadcrumb_links %}
+            </ul>
+          </nav>
+        {% endblock breadcrumbs %}
+
+        {% block content_body %}
+
+          <div class="site-content__main">
+            {% block content %}
+            {% endblock content %}
+          </div>
+        {% endblock content_body %}
+      </div>
+    </div>
+
+  </div>
+  <!-- end .site-content -->
+
+  {% include "indigo/includes/footer.html" %}
+
+  {% block scripts %}
+    <script src="//static.ucl.ac.uk/indigo/js/lib/require.min.js"></script>
+    <script src="//static.ucl.ac.uk/indigo/js/main.js"></script>
+    <script type="text/javascript">
+      require(["app/general"]); //load the default stuff
+    </script>
+    <script type="text/javascript">
+      {% block local_require_scripts %}
+        // This is a hook that pages can use to inject further JS using require() locally
+      {% endblock local_require_scripts %}
+    </script>
+  {% endblock scripts %}
+
+</body>
+
+</html>

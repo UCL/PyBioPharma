@@ -1,0 +1,6 @@
+parameters:
+  populationSize: 10
+  maxGenerations: 10
+  crossoverProbability: 0.6
+  geneCrossoverProbability: 0.5
+  mutationRate: 1

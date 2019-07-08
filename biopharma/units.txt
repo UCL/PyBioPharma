@@ -1,0 +1,23 @@
+
+# Currencies and conversion rates
+
+GBP = [UK_currency] = Pound = £
+USD = [US_currency] = Dollar = $
+EUR = [EU_currency] = Euro = €
+
+@context currency = money
+    [UK_currency] -> [US_currency]: 1.5 * value * USD / GBP
+    [US_currency] -> [UK_currency]: 0.67 * value * GBP / USD
+    [EU_currency] -> [UK_currency]: 0.8 * value * GBP / EUR
+    [EU_currency] -> [US_currency]: 1.2 * value * USD / EUR
+
+    # Compound dimensions don't convert unless we allow for them explicitly
+    [US_currency]/[length]**3 -> [UK_currency]/[length]**3: 0.67 * value * GBP / USD
+    [EU_currency]/[length]**3 -> [UK_currency]/[length]**3: 0.8 * value * GBP / EUR
+@end
+
+# Miscellaneous
+
+percent = 0.01 * count #= %
+cell = []
+h = 1 * hour  # We don't want h as planck_constant!

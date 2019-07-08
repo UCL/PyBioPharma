@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block meta %}
+  {{ super() }}
+  {% if expt.status in [ExperimentStatus.submitted, ExperimentStatus.queued, ExperimentStatus.running] %}
+    <meta http-equiv="refresh" content="5">
+  {% endif %}
+{% endblock meta %}
+
+
+{% block breadcrumb_links %}
+  {{ super() }}
+  <li class="breadcrumb__item">Optimisation</li>
+{% endblock breadcrumb_links %}
+
+
+{% block content %}
+<h1>Experiment execution log</h1>
+
+<p>Experiment {{ expt.id }} submitted on {{ expt.submitted.strftime('%A, %d %B %Y at %H:%M:%S') }}.</p>
+
+{%- if expt.status == ExperimentStatus.finished -%}
+  <a class="btn" href="{{ url_for('main.results', expt_id=expt.id) }}">View results</a>
+{%- endif -%}
+
+<div class="box box--blank box--small">
+  <code style="white-space: pre-wrap;">
+    {{ expt.log }}
+  </code>
+</div>
+
+{% endblock content %}
