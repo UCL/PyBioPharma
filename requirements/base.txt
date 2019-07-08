@@ -6,54 +6,64 @@
 #
 appnope==0.1.0            # via ipython
 argparse==1.4.0           # via scoop
-bleach==2.1.1             # via nbconvert
-bokeh==0.12.11
+attrs==19.1.0             # via jsonschema
+backcall==0.1.0           # via ipython
+bleach==3.1.0             # via nbconvert
+bokeh==1.2.0
 cycler==0.10.0            # via matplotlib
-deap==1.2.2
-decorator==4.1.2          # via ipython, traitlets
-entrypoints==0.2.3        # via nbconvert
-greenlet==0.4.12          # via scoop
-html5lib==1.0b10          # via bleach
-ipykernel==4.6.1          # via ipywidgets, jupyter, jupyter-console, notebook, qtconsole
+deap==1.3.0
+decorator==4.4.0          # via ipython, traitlets
+defusedxml==0.6.0         # via nbconvert
+entrypoints==0.3          # via nbconvert
+greenlet==0.4.15          # via scoop
+ipykernel==5.1.1          # via ipywidgets, jupyter, jupyter-console, notebook, qtconsole
 ipython-genutils==0.2.0   # via nbformat, notebook, qtconsole, traitlets
-ipython==6.2.1            # via ipykernel, ipywidgets, jupyter-console
-ipywidgets==7.0.5         # via jupyter
-jedi==0.11.0              # via ipython
-jinja2==2.10              # via bokeh, nbconvert, notebook
-jsonschema==2.6.0         # via nbformat
-jupyter-client==5.1.0     # via ipykernel, jupyter-console, notebook, qtconsole
-jupyter-console==5.2.0    # via jupyter
-jupyter-core==4.4.0       # via jupyter-client, nbconvert, nbformat, notebook, qtconsole
+ipython==7.6.1            # via ipykernel, ipywidgets, jupyter-console
+ipywidgets==7.5.0         # via jupyter
+jedi==0.14.0              # via ipython
+jinja2==2.10.1            # via bokeh, nbconvert, notebook
+jsonschema==3.0.1         # via nbformat
+jupyter-client==5.3.0     # via ipykernel, jupyter-console, notebook, qtconsole
+jupyter-console==6.0.0    # via jupyter
+jupyter-core==4.5.0       # via jupyter-client, nbconvert, nbformat, notebook, qtconsole
 jupyter==1.0.0
-markupsafe==1.0           # via jinja2
-matplotlib==2.1.0
-mistune==0.8.1            # via nbconvert
-nbconvert==5.3.1          # via jupyter, notebook
+kiwisolver==1.1.0         # via matplotlib
+MarkupSafe==1.1.1         # via jinja2
+matplotlib==3.0.3
+mistune==0.8.4            # via nbconvert
+nbconvert==5.5.0          # via jupyter, notebook
 nbformat==4.4.0           # via ipywidgets, nbconvert, notebook
-notebook==5.2.2           # via jupyter, widgetsnbextension
-numpy==1.13.3
-pandas==0.21.0
+notebook==5.7.8           # via jupyter, widgetsnbextension
+numpy==1.16.4
+packaging==19.0           # via bokeh
+pandas==0.24.2
 pandocfilters==1.4.2      # via nbconvert
-parso==0.1.0              # via jedi
-pexpect==4.3.0            # via ipython
-pickleshare==0.7.4        # via ipython
-pint==0.8.1
-prompt-toolkit==1.0.15    # via ipython, jupyter-console
-ptyprocess==0.5.2         # via pexpect, terminado
-pygments==2.2.0           # via ipython, jupyter-console, nbconvert, qtconsole
-pyparsing==2.2.0          # via matplotlib
-python-dateutil==2.6.1    # via bokeh, jupyter-client, matplotlib, pandas
-pytz==2017.3              # via matplotlib, pandas
-pyyaml==3.12
-pyzmq==16.0.3             # via jupyter-client, scoop
-qtconsole==4.3.1          # via jupyter
+parso==0.5.0              # via jedi
+pexpect==4.7.0            # via ipython
+pickleshare==0.7.5        # via ipython
+pillow==6.1.0             # via bokeh
+pint==0.9
+prometheus-client==0.7.1  # via notebook
+prompt-toolkit==2.0.9     # via ipython, jupyter-console
+ptyprocess==0.6.0         # via pexpect, terminado
+pygments==2.4.2           # via ipython, jupyter-console, nbconvert, qtconsole
+pyparsing==2.4.0          # via matplotlib, packaging
+pyrsistent==0.15.3        # via jsonschema
+python-dateutil==2.8.0    # via bokeh, jupyter-client, matplotlib, pandas
+pytz==2019.1              # via pandas
+Pyyaml==5.1.1             # via bokeh
+pyzmq==18.0.2             # via jupyter-client, notebook, scoop
+qtconsole==4.5.1          # via jupyter
 scoop==0.7.1.1
-simplegeneric==0.8.1      # via ipython
-six==1.11.0               # via bleach, bokeh, cycler, html5lib, matplotlib, prompt-toolkit, python-dateutil, traitlets
-terminado==0.8.1          # via notebook
-testpath==0.3.1           # via nbconvert
-tornado==4.5.2            # via bokeh, ipykernel, notebook, terminado
+Send2Trash==1.5.0         # via notebook
+six==1.12.0               # via bleach, bokeh, cycler, jsonschema, packaging, prompt-toolkit, pyrsistent, python-dateutil, traitlets
+terminado==0.8.2          # via notebook
+testpath==0.4.2           # via nbconvert
+tornado==6.0.3            # via bokeh, ipykernel, jupyter-client, notebook, terminado
 traitlets==4.3.2          # via ipykernel, ipython, ipywidgets, jupyter-client, jupyter-core, nbconvert, nbformat, notebook, qtconsole
 wcwidth==0.1.7            # via prompt-toolkit
-webencodings==0.5.1       # via html5lib
-widgetsnbextension==3.0.8  # via ipywidgets
+webencodings==0.5.1       # via bleach
+widgetsnbextension==3.5.0  # via ipywidgets
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools                # via ipython, jsonschema, kiwisolver
